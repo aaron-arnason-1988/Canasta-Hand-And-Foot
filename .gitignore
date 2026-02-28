@@ -1,0 +1,10 @@
+# build
+*.ii
+*.s
+*.o
+*.so
+*.out
+
+# open files
+*.swp
+
