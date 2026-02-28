@@ -3,7 +3,11 @@
 *.s
 *.o
 *.so
+
+# Executables
 *.out
+*.sh
+*.exe
 
 # open files
 *.swp
