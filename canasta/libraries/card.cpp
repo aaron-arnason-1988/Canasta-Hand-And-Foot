@@ -1,6 +1,7 @@
-#include "card.h"
 #include <array>
 #include <iostream>
+
+#include "card.h"
 
 // Constructor
 Card::Card(Rank r, Suit s) {

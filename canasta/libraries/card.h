@@ -1,6 +1,7 @@
 #ifndef CARD_H
 #define CARD_H
 
+
 #include <string>
 
 // Suit Definition
@@ -28,7 +29,6 @@ struct Card {
 	
 	// print card (using toString
 	void printCard() const;
-
 
 	// String representation
 	std::string toString() const;

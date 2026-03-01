@@ -1,9 +1,4 @@
-#include <iostream>
-#include <string>
-#include <array>
 #include "libraries/card.h"	// -I libraries if only #include "card.h"
-
-
 
 
 int main() {
