@@ -2,10 +2,10 @@
 
 
 int main() {
-	Card c(Rank::Joker, Suit::None);
-	Card c2(Rank::Ace, Suit::Hearts);
-	Card s4(Rank::Four, Suit::Spades);
-	Card c9(Rank::Nine, Suit::Clubs);
+	Card c(Card::Rank::Joker, Card::Suit::None);
+	Card c2(Card::Rank::Ace, Card::Suit::Hearts);
+	Card s4(Card::Rank::Four, Card::Suit::Spades);
+	Card c9(Card::Rank::Nine, Card::Suit::Clubs);
 
 	c.printCard();
 	c2.printCard();
