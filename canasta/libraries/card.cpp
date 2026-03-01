@@ -1,5 +1,6 @@
 #include "card.h"
 #include <array>
+#include <iostream>
 
 // Constructor
 Card::Card(Rank r, Suit s) {
@@ -10,6 +11,11 @@ Card::Card(Rank r, Suit s) {
 	} else {
 		suit = s;
 	}	
+}
+
+// Print the card contents
+void Card::printCard() {
+	std::cout << toString();
 }
 
 

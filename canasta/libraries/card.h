@@ -25,6 +25,10 @@ struct Card {
 	
 	// Constructor
 	Card(Rank r, Suit s);
+	
+	// print card (using toString
+	void printCard();
+
 
 	// String representation
 	std::string toString();
