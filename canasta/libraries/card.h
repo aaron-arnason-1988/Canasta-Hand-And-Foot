@@ -27,11 +27,11 @@ struct Card {
 	Card(Rank r, Suit s);
 	
 	// print card (using toString
-	void printCard();
+	void printCard() const;
 
 
 	// String representation
-	std::string toString();
+	std::string toString() const;
 };
 
 #endif

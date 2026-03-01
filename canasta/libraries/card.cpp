@@ -14,7 +14,7 @@ Card::Card(Rank r, Suit s) {
 }
 
 // Print the card contents
-void Card::printCard() {
+void Card::printCard() const {
 	std::cout << toString();
 }
 
@@ -22,7 +22,7 @@ void Card::printCard() {
 // This toStrings the card in the format
 // [Card]       Rank of Suit
 // Uses string/array stdlibc++
-std::string Card::toString() {
+std::string Card::toString() const {
 
 	std::string cardToString = "[Card]\t";
 
