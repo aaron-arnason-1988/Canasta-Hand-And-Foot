@@ -37,7 +37,7 @@ int main() {
 
 
 	// This prints every card added to the deck
-	for (Card& c : deck) {
+	for (const Card& c : deck) {
 
 		if (c.getRank() == Card::Rank::King) {
 			c.printCard();
