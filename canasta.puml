@@ -1,0 +1,23 @@
+@startuml
+
+class Card {
+  + Card(r : Rank, s : Suit)
+  + getRank() : Rank
+  + getSuit() : Suit
+  + toString() : string
+  + printCard(separator : string) : void
+}
+
+@enduml
+
+@startuml
+
+class Deck {
+	+ Deck(numberDecks : int)
+	+ shuffle() : void
+	+ drawCard() : Card
+	+ printDeck() : void
+  - deck_ : Card
+}
+
+@enduml
