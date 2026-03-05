@@ -1,38 +1,41 @@
+#include <algorithm>
 #include "deck.h"
 
-Deck::Deck(size_t numberDecks) {
+Deck::Deck(int numberDecks) : rng(std::random_device{}()) { reset(numberDecks); }
 
-	// This for loop creates NumberDecks decks (default 1)
+
+void Deck::reset(int numberDecks) {
+	cards.clear();
+
 	for (int deckCount = 0; deckCount < numberDecks; deckCount++) {
-
-		// This creates standard 52 card set
 		for (auto suit : Card::AllSuits) {
 			if (suit == Card::Suit::None) { continue; }
 			for (auto rank : Card::AllRanks) {
 				if (rank == Card::Rank::Joker) { continue; }
-				deck_.emplace_back(rank, suit);
+				cards.emplace_back(rank, suit);
 			}
-		}
+		}		
+	}
 
-		// This creates 2 jokers per deck
-		for (int joker = 0; joker < 2; joker++) {
-			deck_.emplace_back(Card::Rank::Joker, Card::Suit::None);
-		}
+	for (int joker = 0; joker < 2; joker++) {
+		cards.emplace_back(Card::Rank::Joker, Card::Suit::None);
 	}
 }
 
 
 void Deck::shuffle() {
-	return;
+	static std::mt19937 rng(std::random_device{}());	// Random number generator
+	std::shuffle(cards.begin(), cards.end(), rng);		// Fisher-Yates algorithm
 }
 
-std::optional<Card> Deck::drawCard() {
-	if (deck_.empty()){
+
+std::optional<Card> Deck::popCard() {
+	if (cards.empty()){
 		return std::nullopt;
 	}
-	
-	Card draw = deck_.back();
-	deck_.pop_back();
+
+	Card draw = cards.back();
+	cards.pop_back();
 	return draw;
 }
 
@@ -40,11 +43,13 @@ std::optional<Card> Deck::drawCard() {
 void Deck::printDeck() const {
 
 	// Loop through all the cards, every suit print new line.
-	for (const Card& c : deck_) {
-		if (c.getRank() == Card::Rank::King) {
+	int i = 1;
+	for (const Card& c : cards) {
+		if (i % 10 == 0) {
 			c.printCard();
 		} else {
 			c.printCard(" ");
 		}
+		i++;
 	}
 }

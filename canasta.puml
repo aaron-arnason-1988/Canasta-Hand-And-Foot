@@ -14,10 +14,11 @@ class Card {
 
 class Deck {
 	+ Deck(numberDecks : int)
+  + reset(numberDecks : int)
 	+ shuffle() : void
-	+ drawCard() : Card
+	+ popCard() : Card
 	+ printDeck() : void
-  - deck_ : Card
+  - cards : Card
 }
 
 @enduml

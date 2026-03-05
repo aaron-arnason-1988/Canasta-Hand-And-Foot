@@ -44,8 +44,8 @@ public:
 	void printCard(const std::string& seperator="\n") const;
 	
 private:
-	const Rank rank_;
-	const Suit suit_;
+	Rank rank_;
+	Suit suit_;
 };		
 
 constexpr std::array<Card::Rank, Card::RANK_SIZE> Card::AllRanks;

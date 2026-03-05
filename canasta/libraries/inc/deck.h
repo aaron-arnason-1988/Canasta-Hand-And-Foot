@@ -3,16 +3,19 @@
 
 #include <vector>
 #include <optional>
+#include <random>
 #include "card.h"
 
 class Deck {
 public:
-	explicit Deck(size_t numberDecks=1);
+	explicit Deck(int numberDecks=1);
+	void reset(int numberDecks=1);
 	void shuffle();
-	std::optional<Card> drawCard();
+	std::optional<Card> popCard();
 	void printDeck() const;
 private:
-	std::vector<Card> deck_;
+	std::vector<Card> cards;
+	std::mt19937 rng;
 };
 
 #endif
