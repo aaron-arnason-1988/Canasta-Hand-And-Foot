@@ -18,7 +18,19 @@ class Deck {
 	+ shuffle() : void
 	+ popCard() : Card
 	+ printDeck() : void
-  - cards : Card
+  - cards : vector<Card>
+}
+
+@enduml
+
+@startuml
+
+class Player {
+ + Player()
+ + addCard(card Card) : void
+ + playCard() : Card
+ + printHand() : void
+ - hand : dequeu<Card>
 }
 
 @enduml
