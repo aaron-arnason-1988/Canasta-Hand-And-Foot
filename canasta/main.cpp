@@ -1,9 +1,25 @@
-#include "deck.h"
-#include "player.h"
+//#include "deck.h"
+//#include "player.h"
 #include <iostream>
+
+#include "card.h"
 
 int main() {
 
+	CanastaGameEngine::Card c = CanastaGameEngine::Card(CanastaGameEngine::Card::Rank::Seven, CanastaGameEngine::Card::Suit::Hearts);
+
+	// C api (print_card_view) uses C++ object.
+	//print_card_view(c.generateCardView());
+
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			card_view v = c.generateCardView();
+			render_selected_card(&v);	
+			sleep(1);	
+		}
+	}
+
+/*
 	Player p1;
 	Player p2;
 
@@ -58,6 +74,6 @@ int main() {
 	p2.printHand();
 
 	std::cout << std::endl;
-
+*/
 	return 0;
 }
