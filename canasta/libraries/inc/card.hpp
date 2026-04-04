@@ -5,6 +5,8 @@
 #include <array>
 #include <cstddef>
 
+// This is the C/C++ interface. Card rendering (UI) is done 
+// in C. All game logic, players/cards/decks/hands etc are c++
 #include "../../renderer/common_card.h"
 
 namespace CanastaGameEngine {
@@ -12,17 +14,17 @@ namespace CanastaGameEngine {
 	class Card {
 	public:	
 		
-		// Suit Definition
+		// Suit Definition (attaches C++ = C enum)
 		enum class Suit : int { 
-			None = Common_None, 
-			Hearts = Common_Hearts, 
+			None     = Common_None, 
+			Hearts   = Common_Hearts, 
 			Diamonds = Common_Diamonds, 
-			Clubs = Common_Clubs, 
-			Spades = Common_Spades, 
+			Clubs    = Common_Clubs, 
+			Spades   = Common_Spades, 
 			Count 
 		};
 
-		// Rank Definition
+		// Rank Definition (attaches C++ = C enum)
 		enum class Rank : int {
 			Joker = Common_Joker, 
 			Ace   = Common_Ace,   
@@ -68,7 +70,7 @@ namespace CanastaGameEngine {
 		void printCard(const std::string& seperator="\n") const;
 
 		// Helper to translate cpp object to C struct for rendering to screen 
-		inline card_view generateCardView() {
+		inline card_view generateCardView() const {
 			return {
 				static_cast<Ranks>(getRank()),
 				static_cast<Suits>(getSuit())

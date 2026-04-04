@@ -1,7 +1,7 @@
 #include <array>
 #include <iostream>
 
-#include "card.h"
+#include "card.hpp"
 
 namespace CanastaGameEngine {
 

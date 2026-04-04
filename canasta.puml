@@ -29,8 +29,9 @@ class Player {
  + Player()
  + addCard(card Card) : void
  + playCard() : Card
+ + getHand() : deque<Card>;
  + printHand() : void
- - hand : dequeu<Card>
+ - hand : deque<Card>
 }
 
 @enduml

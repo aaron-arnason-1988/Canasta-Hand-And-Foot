@@ -1,3 +1,6 @@
+#ifndef INTERNAL_CARD_H
+#define INTERNAL_CARD_H
+
 #define SUIT_COUNT 5
 #define RANK_COUNT 14
 #define UTF8_BYTE_SIZE 3
@@ -33,3 +36,5 @@ static void set_rank(renderable_card *ctr);
 static void set_suit(renderable_card *ctr);
 static void set_blank(renderable_card *ctr);
 static void render_card(renderable_card *ctr);
+
+#endif

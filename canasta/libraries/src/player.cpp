@@ -1,26 +1,33 @@
-#include "player.h"
+#include "player.hpp"
 
 /* Implement simple war game first. */
+namespace CanastaGameEngine {
 
-Player::Player() : hand() {}
+	Player::Player() : hand() {}
 
 
-void Player::addCard(const Card& card) {
-	hand.push_back(card);
-}
-
-std::optional<Card> Player::playCard() {
-	if (hand.empty()) {
-		return std::nullopt;
+	void Player::addCard(const CanastaGameEngine::Card& card) {
+		hand.push_back(card);
 	}
 
-	Card play = hand.front();
-	hand.pop_front();
-	return play;
-}
+	std::optional<CanastaGameEngine::Card> Player::playCard() {
+		if (hand.empty()) {
+			return std::nullopt;
+		}
 
-void Player::printHand() const {
-	for (const Card& c : hand) {
-		c.printCard(" ");
+		CanastaGameEngine::Card play = hand.front();
+		hand.pop_front();
+		return play;
 	}
+
+	const std::deque<CanastaGameEngine::Card>& Player::getHand() const {
+		return hand;
+	};
+
+	void Player::printHand() const {
+		for (const CanastaGameEngine::Card& c : hand) {
+			c.printCard(" ");
+		}
+	}
+
 }

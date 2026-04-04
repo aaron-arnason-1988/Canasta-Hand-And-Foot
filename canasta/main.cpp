@@ -1,79 +1,77 @@
-//#include "deck.h"
-//#include "player.h"
 #include <iostream>
+#include <vector>
 
-#include "card.h"
+#include "deck.hpp"
+#include "player.hpp"
 
 int main() {
 
-	CanastaGameEngine::Card c = CanastaGameEngine::Card(CanastaGameEngine::Card::Rank::Seven, CanastaGameEngine::Card::Suit::Hearts);
+	CanastaGameEngine::Player p1;
+	CanastaGameEngine::Player p2;
 
-	// C api (print_card_view) uses C++ object.
-	//print_card_view(c.generateCardView());
+	std::vector<CanastaGameEngine::Player *> players = { &p1, &p2 };
 
-	for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 5; j++) {
-			card_view v = c.generateCardView();
-			render_selected_card(&v);	
-			sleep(1);	
+	// Shuffles the deck
+	CanastaGameEngine::Deck d(1);
+	d.shuffle();
+
+	// Add cards to each player.
+	auto playerIterator = players.begin();
+	while (auto cardOpt = d.popCard()) {
+		(*playerIterator)->addCard(*cardOpt);
+		if (++playerIterator == players.end()) {
+			playerIterator = players.begin();
 		}
 	}
 
-/*
-	Player p1;
-	Player p2;
-
-	Deck d(1);
-
-	d.shuffle();	
-//	d.printDeck();
-
-	// deal cards.
-	for (int i = 0; i < 54; i++) {
-		auto cardOpt = d.popCard();
-		if (cardOpt) {
-			if (i % 2 == 0) {
-				p2.addCard(*cardOpt);
-			} else {
-				p1.addCard(*cardOpt);
-			}
-		}
+	/*
+	// Loops through player 1 hand, and prints it
+	for (const CanastaGameEngine::Card& card : p1.getHand()) {
+		card_view c2 = card.generateCardView();
+		render_selected_card(&c2);
+		//sleep(1);
 	}
 
+	// Loops through player 2 hand, and prints it
+	for (const CanastaGameEngine::Card& card : p2.getHand()) {
+		card_view c2 = card.generateCardView();
+		render_selected_card(&c2);
+		//sleep(1);
+	}
+	*/
 
-	p1.printHand();
-	std::cout << std::endl;
-
-	for (int i = 0; i < 1; i++)
+	// This loops through, plays war for p1/p2 cards
+	//for (int i = 0; i < 26; i++)
+	while(true)
 	{
+		// Grab card
 		auto w1Opt = p1.playCard();
 		auto w2Opt = p2.playCard();
 
+		if (!w1Opt || !w2Opt) { break; }
+
+		// p1/p2 cards
 		std::cout << std::endl << std::endl;
 		w1Opt->printCard(" <= p1 | ");
 		w2Opt->printCard(" <= p2");
 		std::cout << std::endl;
 
+
+		card_view c2;
+
 		// game logic
 		if (w2Opt->getRank() < w1Opt->getRank()) {
-			std::cout << "p1 card higher" << std::endl;
+			c2 = w1Opt->generateCardView();
 		} else if (w2Opt->getRank() > w1Opt->getRank()) {
-			std::cout << "p2 card higher" << std::endl;
+			c2 = w2Opt->generateCardView();
 		} else {
 			std::cout << "WAR" << std::endl;
 		}
+
+		render_selected_card(&c2);
+
+		sleep(1);
 	}
 
-	//p2.playCard()->printCard();
-
-	// print current hand
-	std::cout << std::endl << "Player 1" << std::endl;
-	p1.printHand();
-
-	std::cout << std::endl << "Player 2" << std::endl;
-	p2.printHand();
-
-	std::cout << std::endl;
-*/
 	return 0;
 }
