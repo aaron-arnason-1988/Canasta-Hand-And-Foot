@@ -1,18 +1,21 @@
 #include <iostream>
-#include <vector>
 
+#include "card.hpp"
 #include "deck.hpp"
 #include "player.hpp"
 
+using CanastaGameEngine::Card;
+using CanastaGameEngine::Deck;
+using CanastaGameEngine::Player;
+
+
 int main() {
 
-	CanastaGameEngine::Player p1;
-	CanastaGameEngine::Player p2;
-
+	Player p1, p2;
 	std::vector<CanastaGameEngine::Player *> players = { &p1, &p2 };
 
 	// Shuffles the deck
-	CanastaGameEngine::Deck d(1);
+	Deck d(1);
 	d.shuffle();
 
 	// Add cards to each player.
@@ -24,21 +27,21 @@ int main() {
 		}
 	}
 
-	/*
+	
 	// Loops through player 1 hand, and prints it
-	for (const CanastaGameEngine::Card& card : p1.getHand()) {
+	for (const Card& card : p1.getHand()) {
 		card_view c2 = card.generateCardView();
 		render_selected_card(&c2);
 		//sleep(1);
 	}
 
 	// Loops through player 2 hand, and prints it
-	for (const CanastaGameEngine::Card& card : p2.getHand()) {
+	for (const Card& card : p2.getHand()) {
 		card_view c2 = card.generateCardView();
 		render_selected_card(&c2);
 		//sleep(1);
 	}
-	*/
+	
 
 	// This loops through, plays war for p1/p2 cards
 	//for (int i = 0; i < 26; i++)
@@ -50,19 +53,23 @@ int main() {
 
 		if (!w1Opt || !w2Opt) { break; }
 
+		
 		// p1/p2 cards
 		std::cout << std::endl << std::endl;
 		w1Opt->printCard(" <= p1 | ");
 		w2Opt->printCard(" <= p2");
 		std::cout << std::endl;
-
+		
 
 		card_view c2;
 
+		Card::Rank p1r = w1Opt->getRank();
+		Card::Rank p2r = w2Opt->getRank();
+		
 		// game logic
-		if (w2Opt->getRank() < w1Opt->getRank()) {
+		if (p2r < p1r) {
 			c2 = w1Opt->generateCardView();
-		} else if (w2Opt->getRank() > w1Opt->getRank()) {
+		} else if (p2r > p1r) {
 			c2 = w2Opt->generateCardView();
 		} else {
 			std::cout << "WAR" << std::endl;
