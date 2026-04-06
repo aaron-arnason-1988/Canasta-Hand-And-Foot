@@ -2,9 +2,9 @@
 //#include "internal_card.h"
 
 #include <sys/ioctl.h>	// ioctl() and TIOCGWINSZ
-#include <stdlib.h>		// atexit
-#include <stdio.h>
-#include <unistd.h>
+//#include <stdio.h>		// printf()
+#include <unistd.h>		// STDOUT_FILENO
+#include <string.h> 	// memset
 
 #define TERMINAL_MAX_COLUMNS 	MAX_COLCOUNT
 #define TERMINAL_MAX_ROWS		MAX_ROWCOUNT
@@ -14,6 +14,8 @@
 
 #define SUIT_COUNT 5
 #define RANK_COUNT 14
+
+#define OUTPUT_EXTRA_BYTES 10
 
 
 typedef struct {
@@ -389,6 +391,9 @@ void set_card_in_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], card_v
 		if (i == 8) {
 			set_component_in_buffer(fb, card_suits[cv.suit], x + j, y + i);
 		} else {
+
+	// Determine terminal shape, and create 2d array frame buffer
+
 			set_component_in_buffer(fb, card_components[Empty], x + j, y + i);
 		}
 	}
@@ -451,10 +456,6 @@ int main(int argc, char **argv) {
 
 	hide_cursor();
 
-	// ensure cursor comes back
-	atexit(show_cursor);
-
-
 	// Determine terminal shape, and create 2d array frame buffer
 	terminal_dimension window_size;
 	terminal_dimension *term_dim = &window_size;
@@ -470,46 +471,44 @@ int main(int argc, char **argv) {
 	initialize_frame_buffer(frame_buffer, term_dim->rows, term_dim->columns);
 
 
-	set_card_in_buffer(frame_buffer, (card_view){ Common_Ace,  Common_None}, 1, 1);
-	set_card_in_buffer(frame_buffer, (card_view){ Common_Two, Common_Diamonds }, 1, 5);
-	set_card_in_buffer(frame_buffer, (card_view){ Common_King, Common_Clubs }, 1, 10);
-	set_card_in_buffer(frame_buffer, (card_view){ Common_Ten, Common_Spades }, 1, 15);
+	//set_card_in_buffer(frame_buffer, (card_view){ Common_Ace,  Common_Spades}, 1, 327);
+	//set_card_in_buffer(frame_buffer, (card_view){ Common_Two, Common_Diamonds }, 1, 5);
+	//set_card_in_buffer(frame_buffer, (card_view){ Common_King, Common_Clubs }, 1, 10);
+	//set_card_in_buffer(frame_buffer, (card_view){ Common_Ten, Common_Spades }, 1, 15);
 
-
-	for (int i = 0; i < SUIT_COUNT; i++) {
-		for (int j = 0; j < RANK_COUNT; j++) {
-			set_card_in_buffer(frame_buffer, (card_view){ j, i }, 5 + j + i, (i + 1 + j) * 5);
-		}
+	for (int m = 1; m < 327; m++) {
+		set_card_in_buffer(frame_buffer, (card_view){ Common_Seven, Common_Hearts }, 1, m);
+		print_frame_buffer(frame_buffer, TERMINAL_MAX_ROWS, TERMINAL_MAX_COLUMNS);
+		clear_frame_buffer(frame_buffer, TERMINAL_MAX_ROWS, TERMINAL_MAX_COLUMNS);
+		usleep(20000);
 	}
 
+/*
+	int jk = 0;
+
+	for (int t = 0; t < 2; t++) {
+		for (int i = 0; i < SUIT_COUNT; i++) {
+			for (int j = 0; j < RANK_COUNT; j++) {
+				set_card_in_buffer(frame_buffer, (card_view){ j, i }, 3 + jk, (i + 1 + j) * 19);
+			}
+			jk += 3;
+		}
+	}
+*/
 	print_frame_buffer(frame_buffer, TERMINAL_MAX_ROWS, TERMINAL_MAX_COLUMNS);
 
-	/*
-	renderable_card display_card = {0};
-	renderable_card *ctr = &display_card;
-	
-
-	for (int i = 0; i < SUIT_COUNT; i++) {
-		for (int j = 0; j < RANK_COUNT; j++) {
-			card_view cv = {j, i};
-			render_selected_card(&cv);	
-			//sleep(1);	
-		}
-	}
-	*/
+	show_cursor();
 
 	return 0;
 }
 
 
 void show_cursor() {
-	printf("\033[?25h");
-	fflush(stdout);
+	write(STDOUT_FILENO, "\033[?25h", sizeof("\033[?25h") - 1);
 }
 
 void hide_cursor() {
-	printf("\033[?25l");
-	fflush(stdout);
+	write(STDOUT_FILENO, "\033[?25l", sizeof("\033[?25l") - 1);
 }
 
 void set_terminal_size(terminal_dimension *wd) {
@@ -527,16 +526,31 @@ void set_terminal_size(terminal_dimension *wd) {
 }
 
 void print_frame_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], int rows, int cols) {
+
+	static char output[TERMINAL_MAX_ROWS * TERMINAL_MAX_COLUMNS * sizeof(cell) + TERMINAL_MAX_ROWS + OUTPUT_EXTRA_BYTES] = {0};
+	memset(output, 0, sizeof(output));
+
+	int index = 0;
+	output[index++] = '\033';	// Move cursor to top
+	output[index++] = '[';
+	output[index++] = 'H';
+	output[index++] = '\033';	// Clear screen from cursor down
+	output[index++] = '[';
+	output[index++] = 'J';
 	
-	printf("\033[H");
-	
-	int i, j;
+	int i, j, r;
 	for (i = 0; i < rows; i++){
 		for (j = 0; j < cols; j++) {
-			printf("%s", fb[i][j].ch);
+			r = 0;
+			while (fb[i][j].ch[r] != '\0') {
+				output[index++] = fb[i][j].ch[r++];
+			}
 		}
-		printf("\n");
+		output[index++] = '\n';
 	}
+	
+	output[index++] = '\0';
+	write(STDOUT_FILENO, output, index);
 }
 
 void initialize_frame_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], int rows, int cols) {

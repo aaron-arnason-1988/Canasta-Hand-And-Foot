@@ -12,3 +12,6 @@
 # open files
 *.swp
 
+# config
+*.vscode
+*.json
