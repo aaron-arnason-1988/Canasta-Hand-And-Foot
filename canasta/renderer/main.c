@@ -1,8 +1,4 @@
-//#include "common_card.h"
-//#include "internal_card.h"
-
 #include <sys/ioctl.h>	// ioctl() and TIOCGWINSZ
-//#include <stdio.h>		// printf()
 #include <unistd.h>		// STDOUT_FILENO
 #include <string.h> 	// memset
 
@@ -211,7 +207,7 @@ typedef enum {
 	Common_Diamonds, 		// ♦
 	Common_Clubs, 			// ♣
 	Common_Spades			// ♠
-} card_suit_name;
+} card_suits_name;
 
 static const cell card_suits[] = {
 	[Common_None] = { // Star
@@ -318,7 +314,7 @@ static const cell card_components[] = {
 
 typedef struct _card_view {
 	card_ranks_name rank;
-	card_suit_name suit;
+	card_suits_name suit;
 } card_view;
 
 
@@ -330,131 +326,73 @@ void initialize_frame_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], i
 void set_component_in_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], cell component, int row, int col);
 void clear_frame_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], int rows, int cols);
 
-// This should place a card in the buffer at position (x,y) top corner, using rank/suit from card_view and fb is buffer.
-void set_card_in_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], card_view cv, int x, int y) {
-	int i = 0;
+
+void set_card_border_in_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], int x, int y) {
+	const int ROW_WIDTH = 17;
+	const int MIDDLE_ROWS = 11;
+
+	int i = 0;	// Changes for each column
 	int j = 0;	// Changes after each row
 
 	// Top Border
 	i = 0;	// changes after each column
 	set_component_in_buffer(fb, card_components[TopLeftCorner], x + j, y + i);
-	for (i = 1; i < 17; i++) {
-		set_component_in_buffer(fb, card_components[TopHorizontal], x + j, y + i);
-	}
+	for (i = 1; i < ROW_WIDTH; i++) { set_component_in_buffer(fb, card_components[TopHorizontal], x + j, y + i); }
 	set_component_in_buffer(fb, card_components[TopRightCorner], x + j, y + i);
 
-	// Top Rank Row ****
-	j++;
-	i = 0;
-	set_component_in_buffer(fb, card_components[LeftVertical], x + j, y + i);
-	for (i = 1; i < 17; i++) {
-		if (i == 1) {
-			set_component_in_buffer(fb, card_ranks[cv.rank].cells[0], x + j, y + i);
-			i++;
-			set_component_in_buffer(fb, card_ranks[cv.rank].cells[1], x + j, y + i);
-		} else {
-			set_component_in_buffer(fb, card_components[Empty], x + j, y + i);
-		}
-	}
-	set_component_in_buffer(fb, card_components[RightVertical], x + j, y + i);
-
-	// Top Suit Row ****
-	j++;
-	i = 0;
-	set_component_in_buffer(fb, card_components[LeftVertical], x + j, y + i);
-	for (i = 1; i < 17; i++) {
-		if (i == 1) {
-			set_component_in_buffer(fb, card_suits[cv.suit], x + j, y + i);
-		} else {
-			set_component_in_buffer(fb, card_components[Empty], x + j, y + i);
-		}
-	}
-	set_component_in_buffer(fb, card_components[RightVertical], x + j, y + i);
-
 	// 3 blank rows
-	for (int k = 0; k < 3; k++) {
+	for (int k = 0; k < MIDDLE_ROWS; k++) {
 		// Blank Row ****
 		j++;
 		i = 0;
 		set_component_in_buffer(fb, card_components[LeftVertical], x + j, y + i);
-		for (i = 1; i < 17; i++) {
-			set_component_in_buffer(fb, card_components[Empty], x + j, y + i);
-		}
+		for (i = 1; i < ROW_WIDTH; i++) { set_component_in_buffer(fb, card_components[Empty], x + j, y + i); }
 		set_component_in_buffer(fb, card_components[RightVertical], x + j, y + i);
 	}
-
-	// Middle Row 
-	j++;
-	i = 0;
-	set_component_in_buffer(fb, card_components[LeftVertical], x + j, y + i);
-	for (i = 1; i < 17; i++) {
-		if (i == 8) {
-			set_component_in_buffer(fb, card_suits[cv.suit], x + j, y + i);
-		} else {
-
-	// Determine terminal shape, and create 2d array frame buffer
-
-			set_component_in_buffer(fb, card_components[Empty], x + j, y + i);
-		}
-	}
-	set_component_in_buffer(fb, card_components[RightVertical], x + j, y + i);
-
-
-	// 3 blank rows
-	for (int k = 0; k < 3; k++) {
-		// Blank Row ****
-		j++;
-		i = 0;
-		set_component_in_buffer(fb, card_components[LeftVertical], x + j, y + i);
-		for (i = 1; i < 17; i++) {
-			set_component_in_buffer(fb, card_components[Empty], x + j, y + i);
-		}
-		set_component_in_buffer(fb, card_components[RightVertical], x + j, y + i);
-	}
-
-	// Bottom Suit Row
-	j++;
-	i = 0;
-	set_component_in_buffer(fb, card_components[LeftVertical], x + j, y + i);
-	for (i = 1; i < 17; i++) {
-		if (i == 16) {
-			set_component_in_buffer(fb, card_suits[cv.suit], x + j, y + i);
-		} else {
-			set_component_in_buffer(fb, card_components[Empty], x + j, y + i);
-		}
-	}
-	set_component_in_buffer(fb, card_components[RightVertical], x + j, y + i);
-
-	// Bottom Rank Row ****
-	j++;
-	i = 0;
-	set_component_in_buffer(fb, card_components[LeftVertical], x + j, y + i);
-	for (i = 1; i < 17; i++) {
-		if (i == 15) {
-			set_component_in_buffer(fb, card_ranks[cv.rank].cells[0], x + j, y + i);
-			i++;
-			set_component_in_buffer(fb, card_ranks[cv.rank].cells[1], x + j, y + i);
-		} else {
-			set_component_in_buffer(fb, card_components[Empty], x + j, y + i);
-		}
-		
-	}
-	set_component_in_buffer(fb, card_components[RightVertical], x + j, y + i);
 
 	// Bottom Border
 	j++;
 	i = 0;
 	set_component_in_buffer(fb, card_components[BottomLeftCorner], x + j, y + i);
-	for (i = 1; i < 17; i++) {
-		set_component_in_buffer(fb, card_components[BottomHorizontal], x + j, y + i);
-	}
+	for (i = 1; i < ROW_WIDTH; i++) { set_component_in_buffer(fb, card_components[BottomHorizontal], x + j, y + i); }
 	set_component_in_buffer(fb, card_components[BottomRightCorner], x + j, y + i);
+}
+
+void set_card_view_in_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], card_view cv, int x, int y) {
+
+	// Set top left rank
+	set_component_in_buffer(fb, card_ranks[cv.rank].cells[0], x + 1, y + 1);
+	set_component_in_buffer(fb, card_ranks[cv.rank].cells[1], x + 1, y + 2);
+
+	// Set top left suit
+	set_component_in_buffer(fb, card_suits[cv.suit], x + 2, y + 1);
+
+	// Set middle suit
+	set_component_in_buffer(fb, card_suits[cv.suit], x + 6, y + 8);
+
+	// set bottom right suit
+	set_component_in_buffer(fb, card_suits[cv.suit], x + 10, y + 16);
+
+	// set bottom right rank
+	if (cv.rank == Common_Ten || cv.rank == Common_Joker) {
+		set_component_in_buffer(fb, card_ranks[cv.rank].cells[0], x + 11, y + 15);
+		set_component_in_buffer(fb, card_ranks[cv.rank].cells[1], x + 11, y + 16);
+	} else {
+		set_component_in_buffer(fb, card_ranks[cv.rank].cells[1], x + 11, y + 15);
+		set_component_in_buffer(fb, card_ranks[cv.rank].cells[0], x + 11, y + 16);
+	}
+}
+
+// This should place a card in the buffer at position (x,y) top corner, using rank/suit from card_view and fb is buffer.
+void set_card_in_buffer(cell fb[TERMINAL_MAX_ROWS][TERMINAL_MAX_COLUMNS], card_view cv, int x, int y) {
+	set_card_border_in_buffer(fb, x, y);
+	set_card_view_in_buffer(fb, cv, x, y);
 }
 
 
 int main(int argc, char **argv) {
 
-	hide_cursor();
+	//hide_cursor();
 
 	// Determine terminal shape, and create 2d array frame buffer
 	terminal_dimension window_size;
@@ -471,11 +409,17 @@ int main(int argc, char **argv) {
 	initialize_frame_buffer(frame_buffer, term_dim->rows, term_dim->columns);
 
 
-	//set_card_in_buffer(frame_buffer, (card_view){ Common_Ace,  Common_Spades}, 1, 327);
-	//set_card_in_buffer(frame_buffer, (card_view){ Common_Two, Common_Diamonds }, 1, 5);
-	//set_card_in_buffer(frame_buffer, (card_view){ Common_King, Common_Clubs }, 1, 10);
-	//set_card_in_buffer(frame_buffer, (card_view){ Common_Ten, Common_Spades }, 1, 15);
+	set_card_in_buffer(frame_buffer, (card_view){ Common_Ace,  Common_Spades}, 1, 327);
+	set_card_in_buffer(frame_buffer, (card_view){ Common_Two, Common_Diamonds }, 1, 5);
+	set_card_in_buffer(frame_buffer, (card_view){ Common_King, Common_Clubs }, 1, 10);
+	set_card_in_buffer(frame_buffer, (card_view){ Common_Two, Common_Spades }, 1, 15);
 
+	set_card_border_in_buffer(frame_buffer, 20, 20);
+	set_card_view_in_buffer(frame_buffer, (card_view){ Common_Two, Common_Spades }, 20, 20);
+
+	set_card_border_in_buffer(frame_buffer, 20, 200);
+	set_card_view_in_buffer(frame_buffer, (card_view){ Common_Ten, Common_Hearts }, 20, 200);
+/*
 	for (int m = 1; m < 327; m++) {
 		set_card_in_buffer(frame_buffer, (card_view){ Common_Seven, Common_Hearts }, 1, m);
 		print_frame_buffer(frame_buffer, TERMINAL_MAX_ROWS, TERMINAL_MAX_COLUMNS);
@@ -483,7 +427,6 @@ int main(int argc, char **argv) {
 		usleep(20000);
 	}
 
-/*
 	int jk = 0;
 
 	for (int t = 0; t < 2; t++) {
@@ -497,7 +440,7 @@ int main(int argc, char **argv) {
 */
 	print_frame_buffer(frame_buffer, TERMINAL_MAX_ROWS, TERMINAL_MAX_COLUMNS);
 
-	show_cursor();
+	//show_cursor();
 
 	return 0;
 }
