@@ -9,6 +9,14 @@ extern "C" {
 #include <unistd.h>		// STDOUT_FILENO
 #include <string.h> 	// memset
 
+#ifndef MAX_COLCOUNT
+#define MAX_COLCOUNT 0
+#endif
+
+#ifndef MAX_ROWCOUNT
+#define MAX_ROWCOUNT 0
+#endif
+
 #define TERMINAL_MAX_COLUMNS 	MAX_COLCOUNT
 #define TERMINAL_MAX_ROWS		MAX_ROWCOUNT
 
